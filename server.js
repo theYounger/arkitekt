@@ -87,6 +87,8 @@ const isAuthenticated = (req, res, next) => {
 
 app.get('/', gallery);
 
+app.get('/gallery', gallery);
+
 app.get('/register', (req, res) => {
   res.render('./authTemplates/register');
 });
