@@ -1,32 +1,31 @@
-const express = require('express');
-const Router = express.Router();
-const bodyParser = require('body-parser');
-const methodOverride = require('method-override');
-const previewFix = require('../lib/img_preview_fix');
-const db = require('../models');
-const Gallery = db.Gallery;
-
-let imageTotal;
-let imagePartition;
-
-/*==========================
-==========MIDDLEWARE========*/
-Router.use(bodyParser.json());
-Router.use(bodyParser.urlencoded({ extended: true }));
-Router.use(methodOverride(function(req, res){
-  if (req.body && typeof req.body === 'object' && '_method' in req.body) {
-    var method = req.body._method;
-    delete req.body._method;
-    return method;
-  }
-}));
-/*==========================*/
-const isAuthenticated = (req, res, next) => {
+function isAuthenticated(req, res, next) {
   if(!req.isAuthenticated()) {
     return res.redirect('/login');
   }
   return next();
-};
+}
+
+var express = require('express');
+var Router = express.Router();
+var bodyParser = require('body-parser');
+var methodOverride = require('method-override');
+var previewFix = require('../lib/img_preview_fix');
+var db = require('../models');
+var Gallery = db.Gallery;
+var imageTotal;
+var imagePartition;
+
+Router.use(
+  bodyParser.json(),
+  bodyParser.urlencoded({ extended: true }),
+  methodOverride(function(req, res) {
+    if (req.body && typeof req.body === 'object' && '_method' in req.body) {
+      var method = req.body._method;
+      delete req.body._method;
+      return method;
+    }
+  })
+);
 
 /*----------  ROUTES  ----------*/
 Router.route('/')
@@ -80,7 +79,7 @@ Router.route('/:id')
   })
   .then( (image) => {
     console.log('image', image);
-    const imageMap = image.map((element) => {
+    var imageMap = image.map((element) => {
       return {
         UserId: element.dataValues.UserId,
         link: element.dataValues.link,
@@ -91,7 +90,7 @@ Router.route('/:id')
         updatedAt: element.dataValues.updatedAt
       };
     });
-    let mainIndex;
+    var mainIndex;
     imageMap.forEach((ele, ind) => {
       if(ele.id == req.params.id){
         mainIndex = ind;
@@ -102,7 +101,7 @@ Router.route('/:id')
 })
 /*  updates a single gallery photo identified by the :id param */
   .put( isAuthenticated, ( req, res ) => {
-    let selectRow = {};
+    var selectRow = {};
     Gallery.findAll({where: {id: req.params.id}})
       .then ( () => {
         for (var key in req.body) {
@@ -130,7 +129,7 @@ Router.get( '/:id/edit', isAuthenticated, ( req, res ) => {
   Gallery.findAll(
     {where: {id: req.params.id}})
     .then( (image) => {
-      const imgData = image[0].dataValues;
+      var imgData = image[0].dataValues;
       res.render('./galleryTemplates/edit', {
         photoId: imgData.id,
         photoLink: imgData.link
