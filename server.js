@@ -43,7 +43,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 // app.use(analyticTrack);
-app.use('/gallery', gallery);
+app.use('/', gallery);
 
 
 passport.use(new LocalStrategy(
