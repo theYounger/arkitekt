@@ -6,6 +6,7 @@ function isAuthenticated(req, res, next) {
 }
 
 var Router = require('express').Router();
+var bodyParser = require('body-parser');
 var Gallery = require('../models').Gallery;
 var previewFix = require('../lib/img_preview_fix');
 
