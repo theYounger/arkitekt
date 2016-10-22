@@ -101,7 +101,7 @@ app.get('/login', (req, res) => {
 
 //redirect upon authentication
 app.post('/login', passport.authenticate('local', {
-    successRedirect: '/gallery',
+    successRedirect: '/',
     failureRedirect: '/login',
     failureFlash: true,
 }));
