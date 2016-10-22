@@ -43,7 +43,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 // app.use(analyticTrack);
-app.use('/', gallery);
+// app.use('/gallery', gallery);
 
 
 passport.use(new LocalStrategy(
@@ -84,6 +84,8 @@ const isAuthenticated = (req, res, next) => {
   }
   return next();
 };
+
+app.get('/', gallery);
 
 app.get('/register', (req, res) => {
   res.render('./authTemplates/register');
