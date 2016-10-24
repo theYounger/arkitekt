@@ -1,29 +1,30 @@
-'use strict';
+"use strict";
 
-var express = require('express');
+var express = require("express");
 var app = express();
-var passport = require('passport');
-var session = require('express-session');
-var encrypt = require('./lib/encrypt_pw');
-var flash = require('connect-flash');
-var gallery = require('./routes/gallery');
-var bodyParser = require('body-parser');
-var analyticTrack = require('./lib/analytics_track');
+var passport = require("passport");
+var session = require("express-session");
+var encrypt = require("./lib/encrypt_pw");
+var flash = require("connect-flash");
+var gallery = require("./routes/gallery");
+var bodyParser = require("body-parser");
+var analyticTrack = require("./lib/analytics_track");
 var port = process.env.PORT || 3000;
 var config = (function whatSecret() {
-  if ( process.env.NODE_ENV == 'production' ) {
-    return { 'secret': process.env.SECRET };
+  if ( process.env.NODE_ENV == "production" ) {
+    return { "secret": process.env.SECRET };
   } else {
-    return require('./config/config.json');
+    return require("./config/config.json");
   }
 })();
 
-require('./security/passport.js');
+require("./sec/passport.js");
 
-app.set('view engine', 'jade'); app.set('views', './templates');
+app.set("view engine", "jade");
+app.set("views", "./templates");
 
 app.use(
-  express.static('public'),
+  express.static("public"),
   bodyParser.urlencoded( { extended: true } ),
   bodyParser.json(),
   session( { secret: config.secret } ),
@@ -31,32 +32,34 @@ app.use(
   passport.session(),
   flash()
 );
-app.use('/gallery', gallery);
 
-app.route('/login')
-.get(function(req, res) {
-  res.render('authTemplates/login', { messages: req.flash('error')[0] });
+app.use("/", gallery);
+app.use("/gallery", gallery);
+
+app.route("/login")
+.get(function loginPage(req, res) {
+  res.render("authTemplates/login", { messages: req.flash("error")[0] });
 })
-.post(passport.authenticate('local', {
-    successRedirect: '/gallery',
-    failureRedirect: '/login',
+.post(passport.authenticate("local", {
+    successRedirect: "/gallery",
+    failureRedirect: "/login",
     failureFlash: true,
 }));
 
-app.route('/register')
-.get(function(req, res) {
-  res.render('./authTemplates/register');
+app.route("/register")
+.get(function registerPage(req, res) {
+  res.render("./authTemplates/register");
 })
-.post(function(req, res) {
+.post(function registerUser(req, res) {
   encrypt(req, res, 10, req.body.password);
 });
 
-app.get('/logout', function(req, res) {
-  req.logout(); //clears cookies
-  res.redirect('/login');
+app.get("/logout", function logout(req, res) {
+  req.logout();
+  res.redirect("/login");
 });
 
-app.listen(port, function() {
-  var db = require('./models');
+app.listen(port, function sequelizeDb() {
+  var db = require("./models");
   db.sequelize.sync();
 });

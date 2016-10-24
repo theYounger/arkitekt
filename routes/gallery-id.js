@@ -1,23 +1,14 @@
-function isAuthenticated(req, res, next) {
-  if(!req.isAuthenticated()) {
-    return res.redirect('/login');
-  }
-  return next();
-}
-
 var Router = require('express').Router();
-var bodyParser = require('body-parser');
 var Gallery = require('../models').Gallery;
 var previewFix = require('../lib/img_preview_fix');
 
 Router.route('/')
 /*  to see a single gallery photo */
-.get( isAuthenticated, (req, res) => {
+.get(function(req, res) {
   Gallery.findAll({
     attributes: ['UserId', 'id', 'author', 'link', 'description', 'createdAt', 'updatedAt']
   })
   .then( (image) => {
-    console.log('image', image);
     var imageMap = image.map((element) => {
       return {
         UserId: element.dataValues.UserId,
@@ -39,7 +30,7 @@ Router.route('/')
   });
 })
 /*  updates a single gallery photo identified by the :id param */
-  .put( isAuthenticated, ( req, res ) => {
+  .put(function(req, res) {
     var selectRow = {};
     Gallery.findAll({where: {id: req.params.id}})
       .then ( () => {
@@ -54,7 +45,7 @@ Router.route('/')
     });
   })
 /* to delete a single gallery photo identified by the :id param */
-  .delete ( isAuthenticated, ( req, res ) => {
+  .delete (function(req, res){
     Gallery.destroy({where: {id: req.params.id}})
       .then((gallery) => {
         res.render('./galleryTemplates/index', {
