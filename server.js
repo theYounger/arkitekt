@@ -1,5 +1,9 @@
 "use strict";
 
+function loginPage(req, res) {
+  res.render("authTemplates/login", { messages: req.flash("error")[0] });
+}
+
 var express = require("express");
 var app = express();
 var passport = require("passport");
@@ -32,14 +36,12 @@ app.use(
   passport.session(),
   flash()
 );
-
-app.use("/", gallery);
 app.use("/gallery", gallery);
 
+app.get("/", loginPage);
+
 app.route("/login")
-.get(function loginPage(req, res) {
-  res.render("authTemplates/login", { messages: req.flash("error")[0] });
-})
+.get(loginPage)
 .post(passport.authenticate("local", {
     successRedirect: "/gallery",
     failureRedirect: "/login",
