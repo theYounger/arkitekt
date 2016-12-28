@@ -35,6 +35,7 @@
   "devDependencies": {
     "browser-sync": "^2.13.0",
     "gulp": "^3.9.1",
+    "gulp-jshint": "^2.0.4",
     "gulp-sass": "^2.3.2"
   },
   "engines": {

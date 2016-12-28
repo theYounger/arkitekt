@@ -101,7 +101,6 @@ Router.route('/:id')
   });
 });
 
-1
 Router.get('/:id/edit', function queryImage(req, res) {
   Gallery.findAll( { where: { id: req.params.id } } )
   .then(function loadResult(imageResult) {
