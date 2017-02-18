@@ -10,6 +10,7 @@ function authCheck(req, res, next) {
 var express = require('express');
 var Router = express.Router();
 var previewFix = require('../lib/img_preview_fix');
+var sequelize = require('../models').sequelize;
 var Gallery = require('../models').Gallery;
 var methodOverride = require('method-override');
 var imageTotal;
@@ -30,10 +31,11 @@ Router.route('/')
 .get(function queryAllImages(req, res) {
   Gallery.findAll({
     attributes: ['id', 'author', 'link'],
+    order: '"createdAt" DESC'
   })
-  .then(function loadResults(imageResults) {
+  .then(function loadResults(imgs) {
     res.render('./galleryTemplates/index', {
-      photos: imageResults,
+      images: imgs,
     });
   });
 })
@@ -54,29 +56,54 @@ Router.get('/new', function getImageForm(req, res) {
 
 Router.route('/:id')
 .get(function queryImage(req, res) {
-  Gallery.findAll({
-    attributes: ['UserId', 'id', 'author', 'link', 'description', 'createdAt', 'updatedAt']
-  })
-  .then( (image) => {
-    var mainIndex;
-    var imageMap = image.map((element) => {
-      return {
-        UserId: element.dataValues.UserId,
-        link: element.dataValues.link,
-        id: element.dataValues.id,
-        author: element.dataValues.author,
-        description: element.dataValues.description,
-        createdAt: element.dataValues.createdAt,
-        updatedAt: element.dataValues.updatedAt
-      };
+    Gallery.findAll({
+      where: {
+        id: {
+          $lte: req.params.id
+        }
+      },
+      order: '"createdAt" DESC',
+      limit: 4
+    })
+    .then(function(imgs) {
+      res.render('./galleryTemplates/picpage', {
+        img0: imgs[0],
+        img1: imgs[1],
+        img2: imgs[2],
+        img3: imgs[3]
+      });
     });
-    imageMap.forEach((ele, ind) => {
-      if(ele.id == req.params.id){
-        mainIndex = ind;
-      }
-    });
-    previewFix(req, res, mainIndex, imageMap);
-  });
+
+  // Gallery.findById(req.params.id)
+  // .then(function (img) {
+  //     console.log('img', img);
+  // });
+
+
+  // Gallery.findAll({
+  //   attributes: ['UserId', 'id', 'author', 'link', 'description', 'createdAt', 'updatedAt']
+  // })
+  // .then(function repkgImg(img) {
+  //   console.log('inside repkgImg');
+  //   var mainIndex;
+  //   var reImg = img.map(function mapImg(element) {
+  //     return {
+  //       UserId: element.dataValues.UserId,
+  //       link: element.dataValues.link,
+  //       id: element.dataValues.id,
+  //       author: element.dataValues.author,
+  //       description: element.dataValues.description,
+  //       createdAt: element.dataValues.createdAt,
+  //       updatedAt: element.dataValues.updatedAt
+  //     };
+  //   });
+  //   reImg.forEach((ele, ind) => {
+  //     if(ele.id == req.params.id){
+  //       mainIndex = ind;
+  //     }
+  //   });
+  //   previewFix(req, res, mainIndex, reImg);
+  // });
 })
 .put(function queryImage(req, res) {
   var selectRow = {};

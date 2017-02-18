@@ -3,18 +3,18 @@ include ../partials/header
 body
   div.wrapper
     div.aside.aside-1
-      img(src="#{main}")
-      p.picDetails By: #[span.spanNoStyle #{author}]
-      p.picDetails Description: #[span.spanNoStyle #{description}]
-      p.picDetails Added: #[span.spanNoStyle #{createdAt}]
-      p.picDetails Updated: #[span.spanNoStyle #{updatedAt}]
+      img(src="#{img0.get('link')}")
+      p.picDetails By: #[span.spanNoStyle #{img0.get('author')}]
+      p.picDetails Description: #[span.spanNoStyle #{img0.get('description')}]
+      p.picDetails Added: #[span.spanNoStyle #{img0.get('createdAt')}]
+      p.picDetails Updated: #[span.spanNoStyle #{img0.get('updatedAt')}]
       if UserId === UserCurr
         include ../partials/footer
 
     div.aside.aside-2
-      a(href='/gallery/#{co1id}')
-        img.co(src="#{co1}")
-      a(href='/gallery/#{co2id}')
-        img.co(src="#{co2}")
-      a(href='/gallery/#{co3id}')
-        img.co(src="#{co3}")
+      a(href="/gallery/#{img1.get('id')}")
+        img.co(src="#{img1.get('link')}")
+      a(href="/gallery/#{img2.get('id')}")
+        img.co(src="#{img2.get('link')}")
+      a(href="/gallery/#{img3.get('id')}")
+        img.co(src="#{img3.get('link')}")

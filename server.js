@@ -4,8 +4,8 @@ function loginPage(req, res) {
   res.render("authTemplates/login", { messages: req.flash("error")[0] });
 }
 
-var express = require("express");
-var app = express();
+var express = require("express"),
+  app = express();
 var passport = require("passport");
 var session = require("express-session");
 var encrypt = require("./lib/encrypt_pw");
